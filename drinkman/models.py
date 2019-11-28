@@ -12,7 +12,7 @@ class User(models.Model):
 class Item(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
-    image = models.FilePathField()
+    image = models.TextField()
     price = models.IntegerField()
 
 
