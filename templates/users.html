@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <br/>
+
     <div class="row">
         {% for user in users %}
-            <div class="col-2">
+            <div class="col-md-2 col-6">
                 <div class="card">
                     <a href="{% url 'user' user_id=user.id %}">
                         <img src="{{ user.image_url }}" class="card-img-top" alt="{{ user.username }}">
                     </a>
                     <div class="card-body">
-                        <h5 class="card-title">{{ user.username }}</h5>
+                        <h6 class="card-title">{{ user.username }}</h6>
                         <p class="card-text">{{ user.balance }} EUR</p>
                     </div>
                 </div>
