@@ -21,6 +21,11 @@ from drinkman import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+
     path('users/', views.users, name='users'),
     path('users/<int:user_id>', views.user, name='user'),
+
+    path('stock/', views.stock, name='stock'),
+
+    path('delivery/', views.delivery, name='delivery'),
 ]

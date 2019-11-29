@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block pre_content %}
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Drinkman</a>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-6">
+            <div class="jumbotron">
+                <h1 class="display-4">Cheers!</h1>
+                <p class="lead">Drinkman is a tiny drink and snack management software supporting different locations with an individual stock.</p>
+                <hr class="my-4">
+
+                <div class="list-group">
+                  <a href="{% url 'users' %}" class="list-group-item list-group-item-action">Order and user interface</a>
+                  <a href="{% url 'stock' %}" class="list-group-item list-group-item-action">Show current stocks</a>
+                  <a href="{% url 'delivery' %}" class="list-group-item list-group-item-action">Receive a new delivery</a>
+                  <a href="{% url 'admin:index' %}" class="list-group-item list-group-item-action">Admin</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

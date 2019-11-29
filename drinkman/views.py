@@ -5,7 +5,7 @@ from drinkman.models import User
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    return render(request, 'index.html')
 
 
 def users(request):
@@ -15,3 +15,9 @@ def users(request):
 
 def user(request, user_id):
     return HttpResponse("Hello, world. You're at the polls index.")
+
+def stock(request):
+    return HttpResponse("Take a look on the current stocks...")
+
+def delivery(request):
+    return HttpResponse("Receive a new delivery...")
