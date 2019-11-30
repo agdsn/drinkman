@@ -1,7 +1,9 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-from drinkman.models import User
+from drinkman.forms import DeliveryForm
+from drinkman.helpers import increase_stock, new_transaction
+from drinkman.models import User, Item, Location
 
 
 def index(request):
@@ -16,8 +18,30 @@ def users(request):
 def user(request, user_id):
     return HttpResponse("Hello, world. You're at the polls index.")
 
+
 def stock(request):
     return HttpResponse("Take a look on the current stocks...")
 
+
 def delivery(request):
-    return HttpResponse("Receive a new delivery...")
+    items = Item.objects.all()
+
+    if request.method == 'POST':
+        form = DeliveryForm(items, request.POST)
+        if form.is_valid():
+            location = Location.objects.get(id=form.cleaned_data['location'])
+            log = "Added delivery @ {}".format(location)
+            user = User.objects.get(id=form.cleaned_data['user'])
+            for field in form.fields:
+                if field.startswith("item_"):
+                    item = Item.objects.filter(id=field.split("_")[1]).first()
+                    amount = form.cleaned_data[field]
+                    increase_stock(location, item, amount)
+                    log = log + "  +{} {}".format(amount, item)
+            new_transaction(log, user)
+            return redirect('stock')
+
+    else:
+        form = DeliveryForm(items)
+
+    return render(request, 'delivery.html', {'form': form})

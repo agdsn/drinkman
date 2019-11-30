@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 
 
@@ -15,21 +17,27 @@ class Item(models.Model):
     image = models.TextField()
     price = models.IntegerField()
 
+    def __str__(self):
+        return self.name
+
 
 class Location(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
 
+    def __str__(self):
+        return self.name
+
 
 class Stock(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    amount = models.IntegerField()
+    amount = models.IntegerField(default=0)
 
 
 class Transaction(models.Model):
     id = models.IntegerField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.TextField()
-    date = models.DateTimeField()
+    date = models.DateTimeField(default=datetime.now)
     item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)
