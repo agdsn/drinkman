@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 
 from drinkman.forms import DeliveryForm
 from drinkman.helpers import increase_stock, new_transaction
-from drinkman.models import User, Item, Location
+from drinkman.models import User, Item, Location, Stock
 
 
 def index(request):
@@ -20,7 +20,9 @@ def user(request, user_id):
 
 
 def stock(request):
-    return HttpResponse("Take a look on the current stocks...")
+    stock = Stock.objects.all()
+
+    return render(request, 'stock.html', {'stock': stock})
 
 
 def delivery(request):
