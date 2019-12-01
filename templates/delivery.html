@@ -8,10 +8,10 @@
             <h1>New delivery</h1>
             Please specify the delivered amounts:
 
-            <form action="/delivery/" method="post">
+            <form action="{% url 'delivery' %}" method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <input type="submit" value="Submit">
+                <input  class="btn btn-primary" type="submit" value="Submit">
             </form>
         </div>
 
