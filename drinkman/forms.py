@@ -15,3 +15,13 @@ class DeliveryForm(forms.Form):
             self.fields["item_{}".format(item.id)] = forms.IntegerField(label=item.name, min_value=0, initial=0,
                                                                         required=False)
         self.fields['check'] = forms.BooleanField(label='Input is correct', initial=False)
+
+
+class StockForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(StockForm, self).__init__(*args, **kwargs)
+        attributes = {'onchange': 'actionform.submit();',
+                        'class':  'form-control mb-2 mr-sm-2'}
+        self.fields['location'] = forms.ChoiceField(label="Location",
+                                                    choices=map(lambda l: (l.id, l.name), Location.objects.all()),
+                                                    widget=forms.Select(attrs=attributes))

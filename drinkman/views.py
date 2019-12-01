@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-from drinkman.forms import DeliveryForm
+from drinkman.forms import DeliveryForm, StockForm
 from drinkman.helpers import increase_stock, new_transaction
 from drinkman.models import User, Item, Location, Stock
 
@@ -21,8 +21,20 @@ def user(request, user_id):
 
 def stock(request):
     stock = Stock.objects.all()
+    form = StockForm(request.GET)
+    if form.is_valid():
+        location = Location.objects.get(id=form.cleaned_data['location'])
+        stock = Stock.objects.filter(location=location)
 
-    return render(request, 'stock.html', {'stock': stock})
+    else:
+        form = StockForm()
+
+    context = {
+        'stock': stock,
+        'form': form
+    }
+    
+    return render(request, 'stock.html', context)
 
 
 def delivery(request):

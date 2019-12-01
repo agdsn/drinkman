@@ -2,6 +2,11 @@
 
 {% block content %}
 
+<form action="/stock/" method="get" class="form-inline">
+        {{ form }}
+        <input class="btn btn-primary mb-2" type="submit" value="Submit">
+</form>
+
 <table class="table table-striped table-hover">
     <thead>
         <th scope="col">Item</th>
