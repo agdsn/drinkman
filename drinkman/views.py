@@ -16,7 +16,13 @@ def users(request):
 
 
 def user(request, user_id):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    context = {'items': Item.objects.all(), 'user_id': user_id}
+    return render(request, "order.html", context)
+
+
+def buy(request, user_id, item_id):
+    context = {'item': Item.objects.get(id=item_id), 'user_id': user_id}
+    return render(request, "buy.html", context)
 
 
 def newuser(request):
@@ -46,7 +52,7 @@ def stock(request):
         'stock': stock,
         'form': form
     }
-    
+
     return render(request, 'stock.html', context)
 
 

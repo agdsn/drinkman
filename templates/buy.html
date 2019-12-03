@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% load division_filter %}
+
+{% block content %}
+<h1>You sucessfully bought a {{ item.name }} for {{ item.price|divi:100 }} EUR!</h1>
+<form>
+    <input type="button" class="btn btn-primary" value="abort"></input>
+</form>
+{% endblock %}
