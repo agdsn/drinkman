@@ -11,17 +11,24 @@ def index(request):
 
 
 def users(request):
-    context = {'users': User.objects.all()}
+    context = {'users': User.objects.all(), "locationid": request.GET.get("location")}
     return render(request, 'users.html', context)
 
 
 def user(request, user_id):
-    context = {'items': Item.objects.all(), 'user_id': user_id}
+    stocks = Stock.objects.filter(location__id=request.GET.get("location"), amount__gt=0)
+    items = []
+    for stock in stocks:
+        items.append(stock.item)
+    context = {'items': items, 'user_id': user_id, "locationid": request.GET.get("location")}
     return render(request, "order.html", context)
 
 
 def buy(request, user_id, item_id):
-    context = {'item': Item.objects.get(id=item_id), 'user_id': user_id}
+    stock_to_update = Stock.objects.get(item__id=item_id, location__id=request.GET.get("location"))
+    stock_to_update.amount -=1
+    stock_to_update.save()
+    context = {'item': Item.objects.get(id=item_id), 'user_id': user_id, "locationid": request.GET.get("location")}
     return render(request, "buy.html", context)
 
 
@@ -36,6 +43,11 @@ def newuser(request):
         form = NewUserForm()
 
     return render(request, 'newUser.html', {'form': form})
+
+
+def locselect(request):
+    context = {'locations': Location.objects.all()}
+    return render(request, "locationselector.html", context)
 
 
 def stock(request):

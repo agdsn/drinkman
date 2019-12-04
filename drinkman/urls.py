@@ -30,4 +30,6 @@ urlpatterns = [
     path('stock/', views.stock, name='stock'),
 
     path('delivery/', views.delivery, name='delivery'),
+
+    path('selectlocation/', views.locselect, name='selectlocation'),
 ]
