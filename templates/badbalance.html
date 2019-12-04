@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% load division_filter %}
+
+{% block content %}
+<h1>You don't have enough money to buy a {{ item.name }} for {{ item.price|divi:100 }} EUR!</h1>
+<form>
+    <input type="button" class="btn btn-primary" value="abort"></input>
+</form>
+
+    <meta http-equiv="refresh" content="5; URL={% url 'users' %}?location={{ locationid }}">
+{% endblock %}

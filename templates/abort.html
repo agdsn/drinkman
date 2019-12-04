@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% load division_filter %}
+
+{% block content %}
+<h1>You have aborted the process! Your money has been refund!</h1>
+   <meta http-equiv="refresh" content="3; URL={% url 'users' %}?location={{ locationid }}">
+{% endblock %}

@@ -25,11 +25,27 @@ def user(request, user_id):
 
 
 def buy(request, user_id, item_id):
-    stock_to_update = Stock.objects.get(item__id=item_id, location__id=request.GET.get("location"))
-    stock_to_update.amount -=1
-    stock_to_update.save()
-    context = {'item': Item.objects.get(id=item_id), 'user_id': user_id, "locationid": request.GET.get("location")}
-    return render(request, "buy.html", context)
+    page_to_render = ""
+    # get item that was bought
+    bought_item = Item.objects.get(id=item_id)
+
+    # the user who bought the item
+    user_to_update = User.objects.get(id=user_id)
+
+    # update user balance and check if he has enough money
+    if user_to_update.balance >= bought_item.price:
+        user_to_update.balance -= bought_item.price
+        user_to_update.save()
+        # update stock in location
+        stock_to_update = Stock.objects.get(item__id=item_id, location__id=request.GET.get("location"))
+        stock_to_update.amount -= 1
+        stock_to_update.save()
+        page_to_render = "buy.html"
+    else:
+        page_to_render = "badbalance.html"
+
+    context = {'item': bought_item, 'user_id': user_id, "locationid": request.GET.get("location")}
+    return render(request, page_to_render, context)
 
 
 def newuser(request):
@@ -90,3 +106,21 @@ def delivery(request):
         form = DeliveryForm(items)
 
     return render(request, 'delivery.html', {'form': form})
+
+
+def abort(request, user_id, item_id):
+    # get item that was bought
+    bought_item = Item.objects.get(id=item_id)
+
+    # the user who bought the item
+    user_to_update = User.objects.get(id=user_id)
+
+    user_to_update.balance += bought_item.price
+    user_to_update.save()
+    # update stock in location
+    stock_to_update = Stock.objects.get(item__id=item_id, location__id=request.GET.get("location"))
+    stock_to_update.amount += 1
+    stock_to_update.save()
+
+    context = {'users': User.objects.all(), "locationid": request.GET.get("location")}
+    return render(request, 'abort.html', context)

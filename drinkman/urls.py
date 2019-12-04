@@ -32,4 +32,6 @@ urlpatterns = [
     path('delivery/', views.delivery, name='delivery'),
 
     path('selectlocation/', views.locselect, name='selectlocation'),
+
+    path('users/<int:user_id>/buy/<int:item_id>/abort', views.abort, name='abort'),
 ]
