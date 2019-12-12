@@ -6,9 +6,12 @@ from django.db import models
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
     username = models.TextField()
-    balance = models.IntegerField()
+    balance = models.IntegerField(default=0)
     image_url = models.TextField()
-    email = models.EmailField()
+    email = models.EmailField(null=True)
+
+    def usertoken(self):
+        return self.username[0]
 
 
 class Item(models.Model):

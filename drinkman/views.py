@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-from drinkman.forms import DeliveryForm, StockForm
+from drinkman.forms import DeliveryForm, StockForm, NewUserForm
 from drinkman.helpers import increase_stock, new_transaction
 from drinkman.models import User, Item, Location, Stock
 
@@ -17,6 +17,19 @@ def users(request):
 
 def user(request, user_id):
     return HttpResponse("Hello, world. You're at the polls index.")
+
+
+def newuser(request):
+    if request.method == 'POST':
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = User(username=form.cleaned_data['username'], email=form.cleaned_data['email'])
+            user.save()
+            return redirect('users')
+    else:
+        form = NewUserForm()
+
+    return render(request, 'newUser.html', {'form': form})
 
 
 def stock(request):

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block pre_content %}
+    <nav class="navbar navbar-dark bg-dark">
+        <a href="{% url 'users' %}" class="navbar-brand">← back</a>
+        <span class="navbar-text">Create new user</span>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <br/>
+
+    <div class="row">
+        <div class="col-xl-6 col-12">
+            <form action="{% url 'newuser' %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input class="btn btn-primary" type="submit" value="create">
+            </form>
+        </div>
+
+    </div>
+{% endblock %}

@@ -30,3 +30,7 @@ class StockForm(forms.Form):
         self.fields['location'] = forms.ChoiceField(label="Location",
                                                     choices=map(lambda l: (l.id, l.name), Location.objects.all()),
                                                     widget=forms.Select(attrs=attributes))
+
+class NewUserForm(forms.Form):
+    username = forms.CharField(label="Username", widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(label="E-Mail", required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
