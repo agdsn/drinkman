@@ -1,27 +1,35 @@
 {% extends "base.html" %}
 
+{% block pre_content %}
+    <nav class="navbar navbar-dark bg-dark">
+        <a href="{% url 'index' %}" class="navbar-brand">← Home</a>
+
+        <form action="/stock/" method="get" class="form-inline">
+            {{ form }}
+            <input class="btn btn-primary mb-2" type="submit" value="Submit">
+        </form>
+
+        <span class="navbar-text">Stock</span>
+    </nav>
+{% endblock %}
+
 {% block content %}
 
-<form action="/stock/" method="get" class="form-inline">
-        {{ form }}
-        <input class="btn btn-primary mb-2" type="submit" value="Submit">
-</form>
-
-<table class="table table-striped table-hover">
-    <thead>
+    <table class="table table-striped table-hover">
+        <thead>
         <th scope="col">Item</th>
         <th scope="col">Location</th>
         <th scope="col">Amount</th>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         {% for item in stock %}
-        <tr> 
-            <td>{{ item.item.name }}</td>
-            <td>{{ item.location }}</td>
-            <td>{{ item.amount }}</td>
-        </tr>
+            <tr>
+                <td>{{ item.item.name }}</td>
+                <td>{{ item.location }}</td>
+                <td>{{ item.amount }}</td>
+            </tr>
         {% endfor %}
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
 {% endblock %}

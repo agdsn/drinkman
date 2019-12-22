@@ -14,24 +14,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, register_converter
 
-from drinkman import views
+from drinkman import views, converters
+
+register_converter(converters.NegativeIntConverter, 'negint')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
 
     path('users/', views.users, name='users'),
-    path('users/<int:user_id>', views.user, name='user'),
-    path('users/new', views.newuser, name='newuser'),
-    path('users/<int:user_id>/buy/<int:item_id>', views.buy, name='buy'),
+    path('users/<int:user_id>', views.user_show, name='user_show'),
+    path('users/new', views.user_new, name='user_new'),
+    path('users/<int:user_id>/buy/<int:item_id>', views.item_buy, name='item_buy'),
+    path('users/<int:user_id>/deposit/<negint:amount>', views.deposit, name='deposit'),
+    path('users/<int:user_id>/transactions/json', views.transactions_json, name='transactions_json'),
 
     path('stock/', views.stock, name='stock'),
 
     path('delivery/', views.delivery, name='delivery'),
 
-    path('selectlocation/', views.locselect, name='selectlocation'),
+    path('locations/', views.location_select, name='locations'),
 
-    path('users/<int:user_id>/buy/<int:item_id>/abort', views.abort, name='abort'),
+    path('users/<int:user_id>/refund/<int:item_id>', views.refund, name='refund'),
 ]
