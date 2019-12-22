@@ -33,7 +33,7 @@ def buy(user, item, location_id):
     if location is None:
         return False;
 
-    new_transaction("Bought item {} for {} cents at {}".format(item.name, item.price, location.name), user)
+    new_transaction("Bought item {} for {} cents @ {}".format(item.name, item.price, location.name), user)
 
     user.balance -= item.price
     user.save()
@@ -49,7 +49,7 @@ def refund(user, item, location_id):
     if location is None:
         return False
 
-    new_transaction("Refunded item {} for {} cents at {}".format(item.name, item.price, location.name), user)
+    new_transaction("Refunded item {} for {} cents @ {}".format(item.name, item.price, location.name), user)
 
     user.balance += item.price
     user.save()
@@ -73,7 +73,7 @@ def redirect_qd(viewname, *args, qd=None, **kwargs):
 def deposit(user, amount, location_id):
     location = Location.objects.get(id=location_id)
 
-    new_transaction("Deposited {} EUR at {}".format(amount/100, location.name),
+    new_transaction("Deposited {} EUR @ {}".format(amount/100, location.name),
                     user)
 
     user.balance += amount

@@ -126,6 +126,7 @@ def delivery(request):
     if request.method == 'POST':
         form = DeliveryForm(items, request.POST)
         if form.is_valid():
+            overwrite = form.cleaned_data['set']
             location = Location.objects.get(id=form.cleaned_data['location'])
             log = "Added delivery @ {}".format(location)
             user = User.objects.get(id=form.cleaned_data['user'])
@@ -134,12 +135,12 @@ def delivery(request):
                     item = Item.objects.filter(id=field.split("_")[1]).first()
                     amount = form.cleaned_data[field]
 
-                    if form.cleaned_data['set']:
+                    if overwrite:
                         set_stock(location, item, amount)
                     else:
                         increase_stock(location, item, amount)
 
-                    log = log + "  +{} {}".format(amount, item)
+                    log = log + "  {}{} {}".format('+' if overwrite else '=', amount, item)
             new_transaction(log, user)
             return redirect('stock')
 
