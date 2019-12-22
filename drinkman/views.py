@@ -1,9 +1,12 @@
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.http import QueryDict, JsonResponse
+from django.shortcuts import render, redirect, render_to_response
+from django.urls import reverse
 
+from drinkman import helpers
 from drinkman.forms import DeliveryForm, StockForm, NewUserForm
-from drinkman.helpers import increase_stock, new_transaction
-from drinkman.models import User, Item, Location, Stock
+from drinkman.helpers import increase_stock, new_transaction, get_location, redirect_qd, set_stock
+from drinkman.models import User, Item, Location, Stock, Transaction
 
 
 def index(request):
@@ -11,15 +14,77 @@ def index(request):
 
 
 def users(request):
-    context = {'users': User.objects.all()}
-    return render(request, 'users.html', context)
+    location = request.GET.get('location')
+
+    context = {'users': User.objects.order_by('-balance').all()}
+
+    response = render_to_response('users.html', context)
+
+    if location is not None:
+        response.set_cookie('location', location)
+    elif get_location(request) is None:
+        redirect('location_select')
+
+    return response
 
 
-def user(request, user_id):
-    return HttpResponse("Hello, world. You're at the polls index.")
+def user_show(request, user_id):
+    user = User.objects.get(id=user_id)
+
+    after_transaction = request.GET.get('after_transaction')
+
+    stocks = Stock.objects.filter(location__id=get_location(request))
+    items = []
+
+    for stock in stocks:
+        items.append({'item': stock.item, 'stock': stock})
+
+    deposits = [-1, 1, 5, 10, 20, 50]
+
+    context = {'items': items,
+               'user': user,
+               'after_transaction': after_transaction,
+               'deposits': deposits}
+
+    return render(request, "user.html", context)
 
 
-def newuser(request):
+def item_buy(request, user_id, item_id):
+    # get item that was bought
+    item = Item.objects.get(id=item_id)
+
+    # the user who bought the item
+    user = User.objects.get(id=user_id)
+
+    if helpers.buy(user, item, get_location(request)):
+        messages.success(request,
+                         'Successfully bought {} for {} EUR. <a href="{}">Undo Transaction</a>'
+                         .format(item.name, item.get_price(),
+                                 reverse('refund', kwargs={'user_id': user.id, 'item_id': item.id})))
+    else:
+        messages.error(request, 'Error while purchasing.')
+
+    qd = QueryDict(mutable=True)
+    qd['after_transaction'] = True
+
+    return redirect_qd('user_show', qd=qd, user_id=user_id)
+
+
+def deposit(request, user_id, amount):
+    user = User.objects.get(id=user_id)
+
+    if helpers.deposit(user, amount * 100, get_location(request)):
+        messages.success(request, 'Successfully deposited {} EUR.'.format(amount))
+    else:
+        messages.error(request, 'Error while depositing.')
+
+    qd = QueryDict(mutable=True)
+    qd['after_transaction'] = True
+
+    return redirect_qd('user_show', qd=qd, user_id=user_id)
+
+
+def user_new(request):
     if request.method == 'POST':
         form = NewUserForm(request.POST)
         if form.is_valid():
@@ -29,7 +94,12 @@ def newuser(request):
     else:
         form = NewUserForm()
 
-    return render(request, 'newUser.html', {'form': form})
+    return render(request, 'new_user.html', {'form': form})
+
+
+def location_select(request):
+    context = {'locations': Location.objects.all()}
+    return render(request, "location_select.html", context)
 
 
 def stock(request):
@@ -46,7 +116,7 @@ def stock(request):
         'stock': stock,
         'form': form
     }
-    
+
     return render(request, 'stock.html', context)
 
 
@@ -63,7 +133,12 @@ def delivery(request):
                 if field.startswith("item_"):
                     item = Item.objects.filter(id=field.split("_")[1]).first()
                     amount = form.cleaned_data[field]
-                    increase_stock(location, item, amount)
+
+                    if form.cleaned_data['set']:
+                        set_stock(location, item, amount)
+                    else:
+                        increase_stock(location, item, amount)
+
                     log = log + "  +{} {}".format(amount, item)
             new_transaction(log, user)
             return redirect('stock')
@@ -72,3 +147,29 @@ def delivery(request):
         form = DeliveryForm(items)
 
     return render(request, 'delivery.html', {'form': form})
+
+
+def refund(request, user_id, item_id):
+    # get item that was bought
+    item = Item.objects.get(id=item_id)
+
+    # the user who bought the item
+    user = User.objects.get(id=user_id)
+
+    if helpers.refund(user, item, get_location(request)):
+        messages.warning(request,
+                         'Successfully refunded {} for {} EUR.'
+                         .format(item.name, item.get_price()))
+    else:
+        messages.error(request, 'Error while refunding.')
+
+    qd = QueryDict(mutable=True)
+    qd['after_transaction'] = True
+
+    return redirect_qd('user_show', qd=qd, user_id=user_id)
+
+
+def transactions_json(request, user_id):
+    transactions = Transaction.objects.filter(user_id=user_id).order_by('-date').all()
+
+    return JsonResponse([{'message': t.message, 'date': t.date.isoformat(' ', "minutes")} for t in transactions], safe=False)

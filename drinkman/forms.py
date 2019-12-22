@@ -20,16 +20,18 @@ class DeliveryForm(forms.Form):
                                                                             attrs={'class': 'form-control'}),
                                                                         required=False)
         self.fields['check'] = forms.BooleanField(label='Input is correct', initial=False)
+        self.fields['set'] = forms.BooleanField(label='Set instead of increase', initial=False, required=False)
 
 
 class StockForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(StockForm, self).__init__(*args, **kwargs)
-        attributes = {'onchange': 'actionform.submit();',
+        attributes = {'onchange': 'this.form.submit();',
                       'class': 'form-control mb-2 mr-sm-2'}
-        self.fields['location'] = forms.ChoiceField(label="Location",
+        self.fields['location'] = forms.ChoiceField(label="",
                                                     choices=map(lambda l: (l.id, l.name), Location.objects.all()),
                                                     widget=forms.Select(attrs=attributes))
+
 
 class NewUserForm(forms.Form):
     username = forms.CharField(label="Username", widget=forms.TextInput(attrs={'class': 'form-control'}))

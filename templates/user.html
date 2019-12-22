@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% load division_filter %}
+
+{% block pre_content %}
+    <nav class="navbar navbar-dark bg-dark">
+        <a href="{% url 'users' %}" class="navbar-brand">← Back</a>
+
+        <div class="nav-item {% if user.balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+            <b>{{ user.get_balance }} EUR</b>
+        </div>
+
+        <span class="navbar-text text-white">{{ user.username }}</span>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <br/>
+
+    <div class="row">
+        <div class="col-12">
+            <h5><b>Items</b></h5>
+        </div>
+    </div>
+    <div class="row">
+        {% for item in items %}
+            <div class="col-md-2 col-6">
+                <div class="card">
+                    <a href="{% url 'item_buy' user_id=user.id item_id=item.item.id %}">
+                        <img src="{{ item.item.image_url }}" class="card-img-top img-fluid" alt="{{ item.item.name }}"
+                             style="height: 15em; width: auto;">
+                    </a>
+                    <div class="card-body {% if item.stock.amount <= 0 %}text-muted{% endif %}">
+                        <h6 class="card-title">{{ item.item.name }} | {{ item.stock.amount }}</h6>
+                        <p class="card-text">{{ item.item.get_price }} EUR</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <hr/>
+
+    <div class="row">
+        <div class="col-12">
+            <h5><b>Deposit</b></h5>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for deposit in deposits %}
+            <div class="col-md-2 col-6">
+                <div class="card text-center">
+                    <a href="{% url 'deposit' user_id=user.id amount=deposit %}">
+                        <img src="https://agdsn.me/~getraenkekasse/img/eur{{ deposit }}.png"
+                             class="card-img-top img-fluid"
+                             alt="{{ deposit }}" style="height: 10em; width: auto;">
+                    </a>
+                    <div class="card-body">
+                        <h6 class="card-title">{{ deposit }} EUR</h6>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <hr/>
+
+    <div class="row">
+        <div class="col-12">
+            <h5><b>Transactions</b></h5>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <table id="transactions_table" data-toggle="table" data-url="{% url 'transactions_json' user_id=user.id %}"
+                   data-sort-name="date" data-pagination="true" data-search="true" data-sort-order="desc">
+                <thead>
+                <tr>
+                    <th data-sortable="true" data-field="date">Date</th>
+                    <th data-sortable="true" data-field="message">Event</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+
+    {% if after_transaction %}
+        <meta http-equiv="refresh" content="5; URL={% url 'users' %}">
+    {% endif %}
+{% endblock %}

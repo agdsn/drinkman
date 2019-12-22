@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% load division_filter %}
+
 {% block content %}
     <br/>
 
@@ -8,7 +10,7 @@
         {% for user in users %}
             <div class="col-md-2 col-6">
                 <div class="card">
-                    <a href="{% url 'user' user_id=user.id %}">
+                    <a href="{% url 'user_show' user_id=user.id %}">
                         {% if user.image_url %}
                             <img src="{{ user.image_url }}" class="card-img-top" alt="{{ user.username }}">
                         {% else %}
@@ -17,18 +19,18 @@
                     </a>
                     <div class="card-body">
                         <h6 class="card-title">{{ user.username }}</h6>
-                        <p class="card-text">{{ user.balance }} EUR</p>
+                        <p class="card-text">{{ user.get_balance }} EUR</p>
                     </div>
                 </div>
             </div>
         {% endfor %}
         <div class="col-md-2 col-6">
             <div class="card">
-                <a href="{% url 'newuser' %}">
+                <a href="{% url 'user_new' %}">
                     <img src="https://agdsn.me/~getraenkekasse/img/new_user.png" class="card-img-top" alt="new user">
                 </a>
                 <div class="card-body">
-                    <h6 class="card-title">new user</h6>
+                    <h6 class="card-title">New user</h6>
                     <p class="card-text"></p>
                 </div>
             </div>

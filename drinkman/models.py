@@ -10,18 +10,24 @@ class User(models.Model):
     image_url = models.TextField()
     email = models.EmailField(null=True)
 
-    def usertoken(self):
+    def token(self):
         return self.username[0]
+
+    def get_balance(self):
+        return "{:12.2f}".format(round((self.balance / 100), 2))
 
 
 class Item(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
-    image = models.TextField()
+    image_url = models.TextField()
     price = models.IntegerField()
 
     def __str__(self):
         return self.name
+
+    def get_price(self):
+        return "{:12.2f}".format(round((self.price / 100), 2))
 
 
 class Location(models.Model):
