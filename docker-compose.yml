@@ -1,10 +1,17 @@
 version: '2'
 
 services:
-  web:
+  drinkman:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
       - "8000:8000"
+    environment:
+      DJANGO_SECRET: 'SECRET'
+      DB_SERVER: '127.0.0.1'
+      DB_PORT: '5432'
+      DB_NAME: 'drinkman'
+      DB_USER: 'drinkman'
+      DB_PASSWORD: 'password'
