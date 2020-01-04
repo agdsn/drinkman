@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.http import QueryDict, JsonResponse
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from drinkman import helpers
@@ -18,7 +18,7 @@ def users(request):
 
     context = {'users': User.objects.order_by('-balance').all()}
 
-    response = render_to_response('users.html', context)
+    response = render(request, 'users.html', context)
 
     if location is not None:
         response.set_cookie('location', location)
