@@ -75,9 +75,6 @@ WSGI_APPLICATION = 'drinkman.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'OPTIONS': {
-            'options': '-c search_path=drinkman'
-        },
         'NAME': os.environ("DB_NAME"),
         'USER': os.environ("DB_USER"),
         'PASSWORD': os.environ("DB_PW"),
