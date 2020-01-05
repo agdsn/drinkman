@@ -4,7 +4,7 @@ from django.db import models
 
 
 class User(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     username = models.TextField()
     balance = models.IntegerField(default=0)
     image_url = models.TextField()
@@ -18,7 +18,7 @@ class User(models.Model):
 
 
 class Item(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
     image_url = models.TextField()
     price = models.IntegerField()
@@ -31,7 +31,7 @@ class Item(models.Model):
 
 
 class Location(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
 
     def __str__(self):
@@ -45,7 +45,7 @@ class Stock(models.Model):
 
 
 class Transaction(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.TextField()
     date = models.DateTimeField(default=datetime.now)
