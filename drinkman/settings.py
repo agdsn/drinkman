@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ("DJANGO_SECRET")
+SECRET_KEY = os.getenv("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,11 +75,11 @@ WSGI_APPLICATION = 'drinkman.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ("DB_NAME"),
-        'USER': os.environ("DB_USER"),
-        'PASSWORD': os.environ("DB_PW"),
-        'HOST': os.environ("DB_HOST"),
-        'PORT': os.environ("DB_PORT"),
+        'NAME': os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PW"),
+        'HOST': os.getenv("DB_HOST"),
+        'PORT': os.getenv("DB_PORT"),
     },
     'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
