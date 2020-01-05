@@ -14,4 +14,4 @@ services:
       DB_PORT: '5432'
       DB_NAME: 'drinkman'
       DB_USER: 'drinkman'
-      DB_PASSWORD: 'password'
+      DB_PW: 'password'
