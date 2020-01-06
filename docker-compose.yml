@@ -15,3 +15,4 @@ services:
       DB_NAME: drinkman
       DB_USER: postgres
       DB_PW: password
+    restart: always
