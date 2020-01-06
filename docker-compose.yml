@@ -9,9 +9,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DJANGO_SECRET: 'SECRET'
-      DB_HOST: '127.0.0.1'
-      DB_PORT: '5432'
-      DB_NAME: 'drinkman'
-      DB_USER: 'drinkman'
-      DB_PW: 'password'
+      DJANGO_SECRET: SECRET
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: drinkman
+      DB_USER: postgres
+      DB_PW: password

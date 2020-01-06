@@ -1,0 +1,26 @@
+version: '2'
+
+services:
+  db_dev:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: drinkman
+  drinkman_dev:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_SECRET: SECRET
+      DB_HOST: db_dev
+      DB_PORT: 5432
+      DB_NAME: drinkman
+      DB_USER: postgres
+      DB_PW: password
+      DJANGO_DEV: 'true'
+    depends_on:
+      - db_dev

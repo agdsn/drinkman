@@ -22,9 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True if os.getenv("DJANGO_DEV") else False
 
-ALLOWED_HOSTS = ['agdsn.de']
+ALLOWED_HOSTS = ['agdsn.de', 'localhost']
 
 # Application definition
 
