@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from drinkman import helpers
-from drinkman.forms import DeliveryForm, StockForm, NewUserForm
+from drinkman.forms import DeliveryForm, StockForm, UserForm
 from drinkman.helpers import increase_stock, new_transaction, get_location, redirect_qd, set_stock
 from drinkman.models import User, Item, Location, Stock, Transaction
 
@@ -86,15 +86,37 @@ def deposit(request, user_id, amount):
 
 def user_new(request):
     if request.method == 'POST':
-        form = NewUserForm(request.POST)
+        form = UserForm(request.POST)
         if form.is_valid():
-            user = User(username=form.cleaned_data['username'], email=form.cleaned_data['email'])
+            user = User(username=form.cleaned_data['username'], email=form.cleaned_data['email'],
+                        image_url=form.cleaned_data['image_url'])
             user.save()
             return redirect('users')
     else:
-        form = NewUserForm()
+        form = UserForm()
 
     return render(request, 'new_user.html', {'form': form})
+
+
+def user_edit(request, user_id):
+    user = User.objects.get(id=user_id)
+
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            user.username = form.cleaned_data['username']
+            user.email = form.cleaned_data['email']
+            user.image_url = form.cleaned_data['image_url']
+
+            user.save()
+
+            messages.success(request, "Changes saved.")
+
+            return redirect('user_show', user_id=user.id)
+    else:
+        form = UserForm(data={'username': user.username, 'email': user.email, 'image_url': user.image_url})
+
+    return render(request, 'edit_user.html', {'form': form, 'user': user})
 
 
 def location_select(request):
@@ -174,4 +196,5 @@ def refund(request, user_id, item_id):
 def transactions_json(request, user_id):
     transactions = Transaction.objects.filter(user_id=user_id).order_by('-date').all()
 
-    return JsonResponse([{'message': t.message, 'date': t.date.isoformat(' ', "minutes")} for t in transactions], safe=False)
+    return JsonResponse([{'message': t.message, 'date': t.date.isoformat(' ', "minutes")} for t in transactions],
+                        safe=False)

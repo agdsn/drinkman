@@ -33,6 +33,7 @@ class StockForm(forms.Form):
                                                     widget=forms.Select(attrs=attributes))
 
 
-class NewUserForm(forms.Form):
+class UserForm(forms.Form):
     username = forms.CharField(label="Username", widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(label="E-Mail", required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    image_url = forms.CharField(label="Profilbild URL (optional)", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)

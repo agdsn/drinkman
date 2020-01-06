@@ -10,7 +10,7 @@
             <b>{{ user.get_balance }} EUR</b>
         </div>
 
-        <span class="navbar-text text-white">{{ user.username }}</span>
+        <a href="{% url 'user_edit' user_id=user.id %}">🖉 <span class="navbar-text text-white">{{ user.username }}</span></a>
     </nav>
 {% endblock %}
 

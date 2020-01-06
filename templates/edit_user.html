@@ -2,8 +2,8 @@
 
 {% block pre_content %}
     <nav class="navbar navbar-dark bg-dark">
-        <a href="{% url 'users' %}" class="navbar-brand">← Back</a>
-        <span class="navbar-text">Create new user</span>
+        <a href="{% url 'user_show' user_id=user.id %}" class="navbar-brand">← Back</a>
+        <span class="navbar-text">Edit user</span>
     </nav>
 {% endblock %}
 
@@ -12,10 +12,10 @@
 
     <div class="row">
         <div class="col-xl-6 col-12">
-            <form action="{% url 'user_new' %}" method="post">
+            <form action="{% url 'user_edit' user_id=user.id %}" method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <input class="btn btn-primary" type="submit" value="Create">
+                <input class="btn btn-primary" type="submit" value="Edit">
             </form>
         </div>
 
