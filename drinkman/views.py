@@ -33,7 +33,7 @@ def user_show(request, user_id):
 
     after_transaction = request.GET.get('after_transaction')
 
-    stocks = Stock.objects.filter(location__id=get_location(request))
+    stocks = Stock.objects.filter(location__id=get_location(request)).order_by('item__name')
     items = []
 
     for stock in stocks:
@@ -121,7 +121,7 @@ def stock(request):
 
 
 def delivery(request):
-    items = Item.objects.all()
+    items = Item.objects.order_by('name').all()
 
     if request.method == 'POST':
         form = DeliveryForm(items, request.POST)
@@ -135,12 +135,13 @@ def delivery(request):
                     item = Item.objects.filter(id=field.split("_")[1]).first()
                     amount = form.cleaned_data[field]
 
-                    if overwrite:
-                        set_stock(location, item, amount)
-                    else:
-                        increase_stock(location, item, amount)
+                    if amount > 0 or overwrite:
+                        if overwrite:
+                            set_stock(location, item, amount)
+                        else:
+                            increase_stock(location, item, amount)
 
-                    log = log + "  {}{} {}".format('+' if overwrite else '=', amount, item)
+                        log = log + "  {}{} {}".format('=' if overwrite else '+', amount, item)
             new_transaction(log, user)
             return redirect('stock')
 
