@@ -46,6 +46,9 @@ def user_show(request, user_id):
                'after_transaction': after_transaction,
                'deposits': deposits}
 
+    if user.balance < 0:
+        messages.error(request, "Warning! Your balance is negative. Please deposit!", "danger")
+
     return render(request, "user.html", context)
 
 

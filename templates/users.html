@@ -20,7 +20,7 @@
                     </a>
                     <div class="card-body">
                         <h6 class="card-title">{{ user.username }}</h6>
-                        <p class="card-text">{{ user.get_balance }} EUR</p>
+                        <p class="card-text {% if user.balance >= 0 %}text-success{% else %}text-danger{% endif %}">{{ user.get_balance }} EUR</p>
                     </div>
                 </div>
                 <br/>
