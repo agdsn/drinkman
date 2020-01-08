@@ -25,6 +25,7 @@ class Item(models.Model):
     name = models.TextField()
     image_url = models.TextField()
     price = models.IntegerField()
+    purchases = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name

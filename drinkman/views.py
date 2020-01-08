@@ -33,7 +33,7 @@ def user_show(request, user_id):
 
     after_transaction = request.GET.get('after_transaction')
 
-    stocks = Stock.objects.filter(location__id=get_location(request)).order_by('-amount')
+    stocks = Stock.objects.filter(location__id=get_location(request)).order_by('-item__purchases')
     items = []
 
     for stock in stocks:

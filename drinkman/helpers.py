@@ -38,6 +38,9 @@ def buy(user, item, location_id):
     user.balance -= item.price
     user.save()
 
+    item.purchases += 1
+    item.save()
+
     decrease_stock(location, item)
 
     return True
@@ -53,6 +56,9 @@ def refund(user, item, location_id):
 
     user.balance += item.price
     user.save()
+
+    item.purchases -= 1
+    item.save()
 
     increase_stock(location, item)
 
