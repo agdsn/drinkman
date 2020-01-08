@@ -107,9 +107,15 @@ def user_edit(request, user_id):
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
-            user.username = form.cleaned_data['username']
-            user.email = form.cleaned_data['email']
-            user.image_url = form.cleaned_data['image_url']
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            image_url = form.cleaned_data['image_url']
+
+            new_transaction("Edited user: {}&lt;{}&gt; -> {}&lt;{}&gt;".format(user.username, user.email, username, email), user)
+
+            user.username = username
+            user.email = email
+            user.image_url = image_url
 
             user.save()
 
