@@ -111,7 +111,7 @@ def user_edit(request, user_id):
             email = form.cleaned_data['email']
             image_url = form.cleaned_data['image_url']
 
-            new_transaction("Edited user: {}&lt;{}&gt; -> {}&lt;{}&gt;".format(user.username, user.email, username, email), user)
+            new_transaction("Edited user: {}<{}> -> {}<{}>".format(user.username, user.email, username, email), user)
 
             user.username = username
             user.email = email
