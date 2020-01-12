@@ -4,7 +4,7 @@
     <nav class="navbar navbar-dark bg-dark">
         <a href="{% url 'index' %}" class="navbar-brand">← Home</a>
 
-        <form action="/stock/" method="get" class="form-inline">
+        <form action="{% url 'stock' %}" method="get" class="form-inline">
             {{ form }}
             <input class="btn btn-primary mb-2" type="submit" value="Submit">
         </form>
