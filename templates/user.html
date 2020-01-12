@@ -76,7 +76,7 @@
 
     <div class="row">
         <div class="col-12">
-            <table id="transactions_table" data-toggle="table" data-url="{% url 'transactions_json' user_id=user.id %}"
+            <table id="transactions_table" data-escape="true" data-toggle="table" data-url="{% url 'transactions_json' user_id=user.id %}"
                    data-sort-name="date" data-pagination="true" data-search="true" data-sort-order="desc">
                 <thead>
                 <tr>
