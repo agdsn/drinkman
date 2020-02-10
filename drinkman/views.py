@@ -33,11 +33,14 @@ def user_show(request, user_id):
 
     after_transaction = request.GET.get('after_transaction')
 
-    stocks = Stock.objects.filter(location__id=get_location(request)).order_by('-item__purchases', 'item__name')
     items = []
+    available_stocks = Stock.objects.filter(location__id=get_location(request), amount__gt=0).order_by('-item__purchases', 'item__name')
+    for available_stock in available_stocks:
+        items.append({'item': available_stock.item, 'stock': available_stock})
 
-    for stock in stocks:
-        items.append({'item': stock.item, 'stock': stock})
+    not_available_stocks = Stock.objects.filter(location__id=get_location(request), amount__lte=0).order_by('-item__purchases', 'item__name')
+    for not_available_stock in not_available_stocks:
+        items.append({'item': not_available_stock.item, 'stock': not_available_stock})
 
     deposits = [-1, 1, 5, 10, 20, 50]
 
