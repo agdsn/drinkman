@@ -17,9 +17,11 @@ There are [Screenshots](https://imgur.com/a/uq9FOKB) available.
 Drinkman is built with Django.
 
 The developement setup is built in docker. You can run the developement setup with 
+
 `docker-compose -f docker-compose.dev.yml up -d`.
 
 Some operations must be done within the Docker container. This can be done with 
+
 `docker-compose -f docker-compose.dev.yml run drinkman_dev python3 manag.py <command>`
 
 Replace `<command>` with:
