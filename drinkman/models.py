@@ -9,6 +9,7 @@ class User(models.Model):
     balance = models.IntegerField(default=0)
     image_url = models.TextField(null=True)
     email = models.EmailField(null=True)
+    hide_log = models.BooleanField(default=0)
 
     def __str__(self):
         return self.username

@@ -68,6 +68,7 @@
 
     <hr/>
 
+    {% if not user.hide_log %}
     <div class="row">
         <div class="col-12">
             <h5><b>Transactions</b></h5>
@@ -87,6 +88,7 @@
             </table>
         </div>
     </div>
+    {% endif %}
 
 
     {% if after_transaction %}
