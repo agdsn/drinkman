@@ -32,6 +32,7 @@ urlpatterns = [
     path('users/<int:user_id>/deposit/<negint:amount>', views.deposit, name='deposit'),
     path('users/<int:user_id>/transactions/json', views.transactions_json, name='transactions_json'),
 
+    path('stock/<int:location_id>/json/', views.stock_json, name='stock_json'),
     path('stock/', views.stock, name='stock'),
 
     path('delivery/', views.delivery, name='delivery'),

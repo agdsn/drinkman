@@ -14,22 +14,18 @@
 {% endblock %}
 
 {% block content %}
-
-    <table class="table table-striped table-hover">
-        <thead>
-        <th scope="col">Item</th>
-        <th scope="col">Location</th>
-        <th scope="col">Amount</th>
-        </thead>
-        <tbody>
-        {% for item in stock %}
-            <tr>
-                <td>{{ item.item.name }}</td>
-                <td>{{ item.location }}</td>
-                <td>{{ item.amount }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
+    <div class="row">
+        <div class="col-12">
+            <table id="stock_table" data-escape="true" data-toggle="table" data-url="{% url 'stock_json' location_id=location_id %}"
+                   data-sort-name="amount" data-pagination="true" data-search="true" data-sort-order="desc">
+                <thead>
+                <tr>
+                    <th data-sortable="true" data-field="item">Item</th>
+                    <th data-sortable="true" data-field="location">Location</th>
+                    <th data-sortable="true" data-field="amount">Amount</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
 {% endblock %}

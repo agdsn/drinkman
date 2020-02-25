@@ -34,11 +34,13 @@ def user_show(request, user_id):
     after_transaction = request.GET.get('after_transaction')
 
     items = []
-    available_stocks = Stock.objects.filter(location__id=get_location(request), amount__gt=0).order_by('-item__purchases', 'item__name')
+    available_stocks = Stock.objects.filter(location__id=get_location(request), amount__gt=0).order_by(
+        '-item__purchases', 'item__name')
     for available_stock in available_stocks:
         items.append({'item': available_stock.item, 'stock': available_stock})
 
-    not_available_stocks = Stock.objects.filter(location__id=get_location(request), amount__lte=0).order_by('-item__purchases', 'item__name')
+    not_available_stocks = Stock.objects.filter(location__id=get_location(request), amount__lte=0).order_by(
+        '-item__purchases', 'item__name')
     for not_available_stock in not_available_stocks:
         items.append({'item': not_available_stock.item, 'stock': not_available_stock})
 
@@ -137,17 +139,15 @@ def location_select(request):
 
 
 def stock(request):
-    stock = Stock.objects.all()
-    form = StockForm(request.GET)
-    if form.is_valid():
-        location = Location.objects.get(id=form.cleaned_data['location'])
-        stock = Stock.objects.filter(location=location)
+    form = StockForm()
 
-    else:
-        form = StockForm()
+    location_id = 1
+
+    if form.is_valid():
+        location_id = Location.objects.get(id=form.cleaned_data['location'])
 
     context = {
-        'stock': stock,
+        'location_id': location_id,
         'form': form
     }
 
@@ -209,4 +209,18 @@ def transactions_json(request, user_id):
     transactions = Transaction.objects.filter(user_id=user_id).order_by('-date').all()
 
     return JsonResponse([{'message': t.message, 'date': t.date.isoformat(' ', "minutes")} for t in transactions],
+                        safe=False)
+
+
+def stock_json(request, location_id):
+    stock = Stock.objects.order_by('item__name')
+
+    if location_id is not None:
+        stock = stock.filter(location_id=location_id)
+
+    stock = stock.all()
+
+    return JsonResponse([{'item': st.item.name,
+                          'location': st.location.name,
+                          'amount': st.amount} for st in stock],
                         safe=False)
