@@ -22,7 +22,7 @@ The developement setup is built in docker. You can run the developement setup wi
 
 Some operations must be done within the Docker container. This can be done with 
 
-`docker-compose -f docker-compose.dev.yml run drinkman_dev python3 manag.py <command>`
+`docker-compose -f docker-compose.dev.yml run drinkman_dev python3 manage.py <command>`
 
 Replace `<command>` with:
 
