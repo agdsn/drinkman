@@ -139,12 +139,9 @@ def location_select(request):
 
 
 def stock(request):
+    location_id = request.GET.get('location', 1)
+
     form = StockForm()
-
-    location_id = 1
-
-    if form.is_valid():
-        location_id = Location.objects.get(id=form.cleaned_data['location'])
 
     context = {
         'location_id': location_id,
