@@ -118,3 +118,5 @@ GitHub.sublime-settings
 
 ##########
 docker-compose.override.yml
+
+.idea/misc.xml
