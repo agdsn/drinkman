@@ -93,6 +93,8 @@
 
     <a class="btn btn-primary" href="{% url 'transfer' user_id=user.id %}">Transfer money</a>
 
+    <br/>
+
     {% if after_transaction %}
         <meta http-equiv="refresh" content="8; URL={% url 'users' %}">
     {% endif %}
