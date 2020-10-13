@@ -1,3 +1,4 @@
-django~=3.0.2
+django~=3.1.2
 psycopg2~=2.8.4
 uWSGI~=2.0.18
+whitenoise~=5.2.0
