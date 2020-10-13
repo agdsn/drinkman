@@ -75,7 +75,7 @@ def item_buy(request, user_id, item_id):
 
     utc_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
 
-    if transaction is None or (utc_now - transaction.date) > datetime.timedelta(seconds=2):
+    if transaction is None or (utc_now - transaction.date) > datetime.timedelta(seconds=3):
         if helpers.buy(user, item, get_location(request)):
             messages.success(request,
                              'Successfully bought {} for {} EUR. <a href="{}">Undo Transaction</a>'
