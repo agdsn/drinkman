@@ -70,11 +70,12 @@ def redirect_qd(viewname, *args, qd=None, **kwargs):
     return HttpResponseRedirect(rev)
 
 
-def deposit(user, amount, location_id):
+def deposit(user, amount, location_id, transaction=True):
     location = Location.objects.get(id=location_id)
 
-    new_transaction("Deposited {} EUR @ {}".format(amount/100, location.name),
-                    user)
+    if transaction:
+        new_transaction("Deposited {} EUR @ {}".format(amount/100, location.name),
+                        user)
 
     user.balance += amount
     user.save()
@@ -107,3 +108,16 @@ def receive_delivery(location_id, user_id, items, overwrite):
     remove_empty_stocks(location_id)
 
     new_transaction(log, user)
+
+
+def transfer_money(from_id, to_id, amount, location_id):
+    cents = round(amount * 100)
+
+    ufrom = User.objects.get(id=from_id)
+    uto = User.objects.get(id=to_id)
+
+    deposit(ufrom, -cents, location_id, transaction=False)
+    deposit(uto, cents, location_id, transaction=False)
+
+    new_transaction("Transferred {} EUR to {}".format(amount, uto.username), ufrom)
+    new_transaction("Received {} EUR from {}".format(amount, ufrom.username), uto)

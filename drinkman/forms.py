@@ -37,3 +37,15 @@ class UserForm(forms.Form):
     username = forms.CharField(label="Username", widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(label="E-Mail", required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     image_url = forms.CharField(label="Profilbild URL (optional)", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
+
+
+class TransferForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(TransferForm, self).__init__(*args, **kwargs)
+        self.fields['to_user'] = forms.ChoiceField(label="Who should receive money?",
+                                                widget=forms.Select(attrs={'class': 'form-control'}),
+                                                choices=map(lambda u: (u.id, u.username),
+                                                            User.objects.all().order_by(
+                                                                'username')))
+
+        self.fields['amount'] = forms.DecimalField(label='Amount', initial=5, required=True, decimal_places=2)

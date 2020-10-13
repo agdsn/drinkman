@@ -7,8 +7,9 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from drinkman import helpers
-from drinkman.forms import DeliveryForm, StockForm, UserForm
-from drinkman.helpers import increase_stock, new_transaction, get_location, redirect_qd, set_stock, receive_delivery
+from drinkman.forms import DeliveryForm, StockForm, UserForm, TransferForm
+from drinkman.helpers import increase_stock, new_transaction, get_location, redirect_qd, set_stock, receive_delivery, \
+    transfer_money
 from drinkman.models import User, Item, Location, Stock, Transaction
 
 
@@ -220,3 +221,16 @@ def stock_json(request, location_id):
                           'location': st.location.name,
                           'amount': st.amount} for st in stock],
                         safe=False)
+
+
+def transfer(request, user_id):
+    form = TransferForm(request.POST)
+
+    if form.is_valid():
+        transfer_money(user_id, form.cleaned_data['to_user'], form.cleaned_data['amount'], get_location(request))
+
+        messages.success(request, "Balance transferred.")
+
+        return redirect('user_show', user_id=user_id)
+
+    return render(request, 'transfer.html', {'form': form, 'user_id': user_id})

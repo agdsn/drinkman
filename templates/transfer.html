@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block pre_content %}
+    <nav class="navbar navbar-dark bg-dark">
+        <a href="{% url 'user_show' user_id=user_id %}" class="navbar-brand">← Back</a>
+        <span class="navbar-text">Transfer money</span>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <br/>
+
+    <div class="row">
+        <div class="col-xl-6 col-12">
+            <form action="{% url 'transfer' user_id=user_id %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input class="btn btn-primary" type="submit" value="Transfer">
+            </form>
+        </div>
+
+    </div>
+{% endblock %}

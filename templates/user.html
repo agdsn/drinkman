@@ -88,8 +88,10 @@
             </table>
         </div>
     </div>
+    <hr/>
     {% endif %}
 
+    <a class="btn btn-primary" href="{% url 'transfer' user_id=user.id %}">Transfer money</a>
 
     {% if after_transaction %}
         <meta http-equiv="refresh" content="8; URL={% url 'users' %}">
