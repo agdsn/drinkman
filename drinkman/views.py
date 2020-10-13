@@ -1,3 +1,6 @@
+import datetime
+
+import pytz
 from django.contrib import messages
 from django.http import QueryDict, JsonResponse
 from django.shortcuts import render, redirect
@@ -64,16 +67,23 @@ def item_buy(request, user_id, item_id):
     # the user who bought the item
     user = User.objects.get(id=user_id)
 
-    if helpers.buy(user, item, get_location(request)):
-        messages.success(request,
-                         'Successfully bought {} for {} EUR. <a href="{}">Undo Transaction</a>'
-                         .format(item.name, item.get_price(),
-                                 reverse('refund', kwargs={'user_id': user.id, 'item_id': item.id})))
-    else:
-        messages.error(request, 'Error while purchasing.')
+    transaction = Transaction.objects.filter(user=user).order_by("-date").first()
 
     qd = QueryDict(mutable=True)
     qd['after_transaction'] = True
+
+    utc_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+
+    if transaction is None or (utc_now - transaction.date) > datetime.timedelta(seconds=2):
+        if helpers.buy(user, item, get_location(request)):
+            messages.success(request,
+                             'Successfully bought {} for {} EUR. <a href="{}">Undo Transaction</a>'
+                             .format(item.name, item.get_price(),
+                                     reverse('refund', kwargs={'user_id': user.id, 'item_id': item.id})))
+        else:
+            messages.error(request, 'Error while purchasing.')
+    else:
+        messages.error(request, 'Bitte warte kurz vor einer neuen Aktion. (Duplikatsschutz)', )
 
     return redirect_qd('user_show', qd=qd, user_id=user_id)
 
