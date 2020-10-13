@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from drinkman.models import Stock, Transaction, Location
+from drinkman.models import Stock, Transaction, Location, User, Item
 
 
 def set_stock(location, item, amount):
@@ -13,12 +13,6 @@ def set_stock(location, item, amount):
 def increase_stock(location, item, amount=1):
     stock, created = Stock.objects.get_or_create(location=location, item=item)
     stock.amount = stock.amount + amount
-    stock.save()
-
-
-def decrease_stock(location, item, amount=1):
-    stock, created = Stock.objects.get_or_create(location=location, item=item)
-    stock.amount -= amount
     stock.save()
 
 
@@ -41,7 +35,7 @@ def buy(user, item, location_id):
     item.purchases += 1
     item.save()
 
-    decrease_stock(location, item)
+    increase_stock(location, item, -1)
 
     return True
 
@@ -86,3 +80,30 @@ def deposit(user, amount, location_id):
     user.save()
 
     return True
+
+
+def remove_empty_stocks(location_id):
+    stocks = Stock.objects.all().filter(amount=0, location_id=location_id)
+
+    for stock in stocks:
+        stock.delete()
+
+
+def receive_delivery(location_id, user_id, items, overwrite):
+    location = Location.objects.get(id=location_id)
+    log = "Added delivery @ {}".format(location)
+    user = User.objects.get(id=user_id)
+    for item_id, amount in items:
+        item = Item.objects.filter(id=item_id).first()
+
+        if amount != 0 or overwrite:
+            if overwrite:
+                set_stock(location, item, amount)
+            else:
+                increase_stock(location, item, amount)
+
+            log = log + "  {}{} {}".format('=' if overwrite else '+', amount, item)
+
+    remove_empty_stocks(location_id)
+
+    new_transaction(log, user)

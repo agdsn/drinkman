@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from drinkman import helpers
 from drinkman.forms import DeliveryForm, StockForm, UserForm
-from drinkman.helpers import increase_stock, new_transaction, get_location, redirect_qd, set_stock
+from drinkman.helpers import increase_stock, new_transaction, get_location, redirect_qd, set_stock, receive_delivery
 from drinkman.models import User, Item, Location, Stock, Transaction
 
 
@@ -157,25 +157,14 @@ def delivery(request):
     if request.method == 'POST':
         form = DeliveryForm(items, request.POST)
         if form.is_valid():
-            overwrite = form.cleaned_data['set']
-            location = Location.objects.get(id=form.cleaned_data['location'])
-            log = "Added delivery @ {}".format(location)
-            user = User.objects.get(id=form.cleaned_data['user'])
+            items = []
             for field in form.fields:
                 if field.startswith("item_"):
-                    item = Item.objects.filter(id=field.split("_")[1]).first()
-                    amount = form.cleaned_data[field]
+                    items.append((field.split("_")[1], form.cleaned_data[field]))
 
-                    if amount > 0 or overwrite:
-                        if overwrite:
-                            set_stock(location, item, amount)
-                        else:
-                            increase_stock(location, item, amount)
+            receive_delivery(form.cleaned_data['location'], form.cleaned_data['user'], items, form.cleaned_data['set'])
 
-                        log = log + "  {}{} {}".format('=' if overwrite else '+', amount, item)
-            new_transaction(log, user)
             return redirect('stock')
-
     else:
         form = DeliveryForm(items)
 

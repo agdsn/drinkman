@@ -15,7 +15,7 @@ class DeliveryForm(forms.Form):
                                                     widget=forms.Select(attrs={'class': 'form-control'}),
                                                     choices=map(lambda l: (l.id, l.name), Location.objects.all()))
         for item in items:
-            self.fields["item_{}".format(item.id)] = forms.IntegerField(label=item.name, min_value=0, initial=0,
+            self.fields["item_{}".format(item.id)] = forms.IntegerField(label=item.name, initial=0,
                                                                         widget=forms.NumberInput(
                                                                             attrs={'class': 'form-control'}),
                                                                         required=False)

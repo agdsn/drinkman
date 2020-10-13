@@ -54,7 +54,7 @@ class Stock(models.Model):
 
 class Transaction(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="transactions")
     message = models.TextField()
     date = models.DateTimeField(default=datetime.now)
     item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)
