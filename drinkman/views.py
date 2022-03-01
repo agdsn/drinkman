@@ -64,7 +64,7 @@ def user_show(request, user_id):
         messages.error(request, "Warning! Your balance is negative. Please deposit!", "danger")
 
     if user.fee > 0:
-        messages.error(request, f"Your current additional fee is: {round(user.fee * 100)}%")
+        messages.error(request, f"Your current additional fee is: {round(user.fee * 100)}%. Fees will not be refunded.")
 
     return render(request, "user.html", context)
 
