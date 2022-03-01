@@ -1,4 +1,5 @@
 import datetime
+from itertools import chain
 
 import pytz
 from django.contrib import messages
@@ -20,7 +21,11 @@ def index(request):
 def users(request):
     location = request.GET.get('location')
 
-    context = {'users': User.objects.order_by('-balance').all()}
+    users_pos = User.objects.order_by('-balance').filter(balance__gte=0).all()
+    users_neg = User.objects.order_by('?').filter(balance__lt=0).all()
+    users_all = chain(users_pos, users_neg)
+
+    context = {'users': users_all}
 
     response = render(request, 'users.html', context)
 
