@@ -7,6 +7,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: drinkman
+    ports:
+      - "8432:5432"
   drinkman_dev:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
