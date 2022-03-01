@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from drinkman import helpers
 from drinkman.forms import DeliveryForm, StockForm, UserForm, TransferForm
-from drinkman.helpers import new_transaction, get_location, redirect_qd, receive_delivery, \
+from drinkman.helpers import increase_stock, new_transaction, get_location, redirect_qd, set_stock, receive_delivery, \
     transfer_money
 from drinkman.models import User, Item, Location, Stock, Transaction
 
@@ -62,9 +62,6 @@ def user_show(request, user_id):
 
     if user.balance < -500:
         messages.error(request, "Warning! Your balance is negative. Please deposit!", "danger")
-
-    if user.fee > 0:
-        messages.error(request, f"Your current additional fee is: {round(user.fee * 100)}%")
 
     return render(request, "user.html", context)
 
