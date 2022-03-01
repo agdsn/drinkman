@@ -25,11 +25,13 @@ def buy(user, item, location_id):
     location = Location.objects.get(id=location_id)
 
     if location is None:
-        return False;
+        return False
 
-    new_transaction("Bought item {} for {} cents @ {}".format(item.name, item.price, location.name), user)
+    price = round(item.price + (item.price * user.fee), 2)
 
-    user.balance -= item.price
+    new_transaction("Bought item {} for {} cents @ {}".format(item.name, price, location.name), user)
+
+    user.balance -= price
     user.save()
 
     item.purchases += 1

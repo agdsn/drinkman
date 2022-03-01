@@ -20,6 +20,18 @@ class User(models.Model):
     def get_balance(self):
         return "{:12.2f}".format(round((self.balance / 100), 2))
 
+    @property
+    def fee(self):
+        if self.balance < -1000:
+            multiplier = abs(self.balance)
+
+            return round(round(multiplier / 100, 2) * 0.01, 2)
+
+        return 0
+
+    def calc_price(self, price):
+        return "{:12.2f}".format(round(((price + (price * self.fee)) / 100), 2))
+
 
 class Item(models.Model):
     id = models.AutoField(primary_key=True)

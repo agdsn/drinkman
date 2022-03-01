@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load division_filter %}
+{% load user %}
 
 {% block pre_content %}
     <nav class="navbar navbar-dark bg-dark">
@@ -32,7 +33,7 @@
                     </a>
                     <div class="card-body {% if item.stock.amount <= 0 %}text-muted{% endif %}">
                         <h6 class="card-title">{{ item.item.name }}</h6>
-                        <p class="card-text">{{ item.item.get_price }} EUR <span class="float-right">{{ item.stock.amount }}x</span></p>
+                        <p class="card-text">{%  user_price user item.item.price %} EUR <span class="float-right">{{ item.stock.amount }}x</span></p>
                     </div>
                 </div>
                 <br/>
