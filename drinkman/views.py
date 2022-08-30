@@ -58,26 +58,44 @@ def user_show(request, user_id):
 
     after_transaction = request.GET.get('after_transaction')
 
-    items = []
-    available_stocks = Stock.objects.filter(location__id=get_location(request), amount__gt=0).order_by(
-        '-item__purchases', 'item__name')
-    for available_stock in available_stocks:
-        items.append({'item': available_stock.item, 'stock': available_stock})
+    user_item_purchases_raw = Transaction.objects \
+        .values('item__id') \
+        .annotate(purchases=Count('item')) \
+        .filter(user=user,
+                amount__lt=0)
 
-    not_available_stocks = Stock.objects.filter(location__id=get_location(request), amount__lte=0).order_by(
+    user_item_purchases = {
+        uip['item__id']: uip['purchases']
+        for uip in user_item_purchases_raw
+    }
+
+    stockitems = []
+    available_stocks = list(Stock.objects.filter(location__id=get_location(request), amount__gt=0).order_by(
+        '-item__purchases', 'item__name'))
+
+    available_stocks.sort(key=lambda si: user_item_purchases.get(si.item.id, 0), reverse=True)
+
+    for available_stock in available_stocks:
+        stockitems.append({'item': available_stock.item, 'stock': available_stock})
+
+    not_available_stocks =Stock.objects.filter(location__id=get_location(request), amount__lte=0).order_by(
         '-item__purchases', 'item__name')
     for not_available_stock in not_available_stocks:
-        items.append({'item': not_available_stock.item, 'stock': not_available_stock})
+        stockitems.append({'item': not_available_stock.item, 'stock': not_available_stock})
 
     deposits = [-1, 1, 5, 10, 20, 50]
 
-    context = {'items': items,
+    context = {'stockitems': stockitems,
                'user': user,
                'after_transaction': after_transaction,
                'deposits': deposits}
 
-    if user.balance < -500:
-        messages.error(request, "Warning! Your balance is negative. Please deposit!", "danger")
+    if user.balance < 0:
+        messages.error(request, "Warning! Your balance is negative. Please deposit! Maximum negative balance is -10€.",
+                       "danger")
+
+    if user.is_guest:
+        messages.info(request, "This is the guest user. Please select an item and deposit the shown amount of money in cash.")
 
     return render(request, "user.html", context)
 
@@ -96,16 +114,19 @@ def item_buy(request, user_id, item_id):
 
     utc_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
 
-    if transaction is None or (utc_now - transaction.date) > datetime.timedelta(seconds=3):
-        if helpers.buy(user, item, get_location(request)):
+    wait_seconds = 2
+
+    if transaction is None or (utc_now - transaction.date) > datetime.timedelta(seconds=wait_seconds):
+        price = helpers.buy(user, item, get_location(request))
+        if price is not None:
             messages.success(request,
-                             'Successfully bought {} for {} EUR. <a href="{}">Undo Transaction</a>'
-                             .format(item.name, item.get_price(),
+                             'Successfully bought {} for {:12.2f} EUR. <a href="{}">Undo Transaction</a>'
+                             .format(item.name, cents_to_eur(price),
                                      reverse('refund', kwargs={'user_id': user.id, 'item_id': item.id})))
         else:
             messages.error(request, 'Error while purchasing.')
     else:
-        messages.error(request, 'Bitte warte kurz vor einer neuen Aktion. (Duplikatsschutz)', )
+        messages.error(request, f'Please wait {wait_seconds} seconds between actions.', )
 
     return redirect_qd('user_show', qd=qd, user_id=user_id)
 
@@ -210,10 +231,12 @@ def refund(request, user_id, item_id):
     # the user who bought the item
     user = User.objects.get(id=user_id)
 
-    if helpers.refund(user, item, get_location(request)):
+    refund_amt = helpers.refund(user, item, get_location(request))
+
+    if refund_amt is not None:
         messages.warning(request,
-                         'Successfully refunded {} for {} EUR.'
-                         .format(item.name, item.get_price()))
+                         'Successfully refunded {} for {:12.2f} EUR.'
+                         .format(item.name, cents_to_eur(refund_amt)))
     else:
         messages.error(request, 'Error while refunding.')
 

@@ -1,4 +1,5 @@
 from django import forms
+from django.db.models.functions import Lower
 
 from drinkman.models import User, Location
 
@@ -9,7 +10,7 @@ class DeliveryForm(forms.Form):
         self.fields['user'] = forms.ChoiceField(label="Who are you?",
                                                 widget=forms.Select(attrs={'class': 'form-control'}),
                                                 choices=map(lambda u: (u.id, u.username),
-                                                            User.objects.all().order_by(
+                                                            User.objects.order_by(Lower('username')).all().order_by(
                                                                 'username')))
         self.fields['location'] = forms.ChoiceField(label="Location",
                                                     widget=forms.Select(attrs={'class': 'form-control'}),
@@ -45,7 +46,7 @@ class TransferForm(forms.Form):
         self.fields['to_user'] = forms.ChoiceField(label="Who should receive money?",
                                                 widget=forms.Select(attrs={'class': 'form-control'}),
                                                 choices=map(lambda u: (u.id, u.username),
-                                                            User.objects.all().order_by(
+                                                            User.objects.order_by(Lower('username')).all().order_by(
                                                                 'username')))
 
-        self.fields['amount'] = forms.DecimalField(label='Amount', initial=5, required=True, decimal_places=2)
+        self.fields['amount'] = forms.DecimalField(label='Amount in EUR', initial=5, required=True, decimal_places=2)

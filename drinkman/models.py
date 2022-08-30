@@ -10,6 +10,7 @@ class User(models.Model):
     image_url = models.TextField(null=True)
     email = models.EmailField(null=True)
     hide_log = models.BooleanField(default=0)
+    is_guest = models.BooleanField(default=0)
 
     def __str__(self):
         return self.username
@@ -30,9 +31,6 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
-
-    def get_price(self):
-        return "{:12.2f}".format(round((self.price / 100), 2))
 
 
 class Location(models.Model):
@@ -58,6 +56,14 @@ class Transaction(models.Model):
     message = models.TextField()
     date = models.DateTimeField(default=datetime.now)
     item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)
+    location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
+    amount = models.IntegerField(null=True)
 
     def __str__(self):
         return "{}.{}.{}".format(self.id, self.user.username, self.date)
+
+
+class Discount(models.Model):
+    id = models.AutoField(primary_key=True)
+    balance = models.IntegerField(default=0)
+    reduce_step = models.IntegerField(default=10)
