@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load division_filter %}
+{% load price %}
 
 {% block pre_content %}
     <nav class="navbar navbar-dark bg-dark">
@@ -22,23 +23,32 @@
             <h5><b>Items</b></h5>
         </div>
     </div>
-    <div class="row">
-        {% for item in items %}
-            <div class="col-md-3 col-6 align-items-stretch" {% if item.stock.amount <= 0 %}style="opacity: 0.5" {% endif %}>
-                <div class="card">
-                    <a class="text-center" href="{% url 'item_buy' user_id=user.id item_id=item.item.id %}">
-                        <img src="{{ item.item.image_url }}" class="card-img-top img-fluid" alt="{{ item.item.name }}"
-                              style="height: 15em; width: auto;">
-                    </a>
-                    <div class="card-body {% if item.stock.amount <= 0 %}text-muted{% endif %}">
-                        <h6 class="card-title">{{ item.item.name }}</h6>
-                        <p class="card-text">{{ item.item.get_price }} EUR <span class="float-right">{{ item.stock.amount }}x</span></p>
+    {% if user.balance >= -1000 %}
+        <div class="row">
+            {% for stockitem in stockitems %}
+                {% calc_price stockitem.item user as price %}
+                <div class="col-md-3 col-6 align-items-stretch" {% if stockitem.stock.amount <= 0 %}style="opacity: 0.5" {% endif %}>
+                    <div class="card">
+                        <a class="text-center" href="{% url 'item_buy' user_id=user.id item_id=stockitem.item.id %}">
+                            <img src="{{ stockitem.item.image_url }}" class="card-img-top img-fluid" alt="{{ stockitem.item.name }}"
+                                  style="height: 15em; width: auto;">
+                        </a>
+                        <div class="card-body {% if stockitem.stock.amount <= 0 %}text-muted{% endif %}">
+                            <h6 class="card-title">{{ stockitem.item.name }}</h6>
+                            <p class="card-text">{{ price|to_decimal }} EUR <span class="float-right">{{ stockitem.stock.amount }}x</span></p>
+                        </div>
                     </div>
+                    <br/>
                 </div>
-                <br/>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center">
+            <div class="alert alert-danger" role="alert">
+              <h4 class="alert-heading">You cannot buy any items if your balance is less than -10,00€. Please deposit or use the guest account.</h4>
             </div>
-        {% endfor %}
-    </div>
+        </div>
+    {% endif %}
 
     <hr/>
 
@@ -91,12 +101,20 @@
     <hr/>
     {% endif %}
 
+    {% if user.balance > 0 %}
     <a class="btn btn-primary" href="{% url 'transfer' user_id=user.id %}">Transfer money</a>
+    {% endif %}
 
     <br/>
     <br/>
 
     {% if after_transaction %}
-        <meta http-equiv="refresh" content="8; URL={% url 'users' %}">
+        <meta http-equiv="refresh" content="10; URL={% url 'users' %}">
     {% endif %}
+
+    <script>
+        setTimeout(function () {
+            window.scrollTo(0, 0);
+        }, 50);
+    </script>
 {% endblock %}
