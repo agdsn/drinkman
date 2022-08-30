@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  db_dev:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: drinkman
+    ports:
+      - "8432:5432"
+  drinkman_dev:
+    build: .
+    volumes:
+      - .:/code
+    ports:
+      - "8000:80"
+    environment:
+      DJANGO_SECRET: SECRET
+      DB_HOST: db_dev
+      DB_PORT: 5432
+      DB_NAME: drinkman
+      DB_USER: postgres
+      DB_PW: password
+      DJANGO_DEV: 'true'
+    depends_on:
+      - db_dev

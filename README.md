@@ -16,13 +16,18 @@ There are [Screenshots](https://imgur.com/a/uq9FOKB) available.
 ## Developement setup
 Drinkman is built with Django.
 
-The developement setup is built in docker. You can run the developement setup with 
+The developement setup can be used with a venv.
 
-`docker-compose -f docker-compose.dev.yml up -d`.
+- Create venv
+- Install requirements.txt as venv
+- Run `source .devenv`
+- Run `./manage.py runserver 0.0.0.0:8000` in venv
 
-Some operations must be done within the Docker container. This can be done with 
+The `manage.py` file can be used as follows
 
-`docker-compose -f docker-compose.dev.yml run drinkman_dev python3 manage.py <command>`
+- `source venv/bin/activate`
+- `source .devenv`
+- `./manage.py <command>`
 
 Replace `<command>` with:
 
@@ -49,4 +54,4 @@ Drinkman can be deployed with docker-compose using uWSGI. This can be done with 
 
 `docker-compose up -d`
  
- You can insert database details and secrets with a `docker-compose.override.yml`.
+You can insert database details and secrets with a `docker-compose.override.yml`.
