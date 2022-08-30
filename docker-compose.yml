@@ -2,10 +2,8 @@ version: '2'
 
 services:
   drinkman:
-    build: .
-    command: uwsgi --ini uwsgi.ini #python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/code
+    image: ghcr.io/agdsn/drinkman:master
+    command: uwsgi --ini uwsgi.ini
     ports:
       - "8000:8000"
     environment:
