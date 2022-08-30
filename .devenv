@@ -1,0 +1,2 @@
+export DJANGO_DEV=1
+export DJANGO_SECRET=SECRET

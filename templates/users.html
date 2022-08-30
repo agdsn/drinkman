@@ -4,28 +4,33 @@
 {% load division_filter %}
 
 {% block content %}
-    <br/>
+    <div class="row mt-1">
+        <div class="col-12">
+            <h4>
+                <span class="badge badge-info">
+                    Recent users
+                </span>
+            </h4>
+        </div>
 
-    <div class="row">
-        {% for user in users %}
-            <div class="col-md-2 col-6">
-                <div class="card">
-                    <a href="{% url 'user_show' user_id=user.id %}">
-                        {% if user.image_url %}
-                            <img src="{{ user.image_url }}" class="card-img-top" alt="{{ user.username }}">
-                        {% else %}
-                            <img src="https://agdsn.me/~getraenkekasse/img/no_user_image.png" class="card-img-top"
-                                 alt="{{ user.username }}">
-                        {% endif %}
-                    </a>
-                    <div class="card-body">
-                        <h6 class="card-title">{{ user.username }}</h6>
-                        <p class="card-text {% if user.balance >= 0 %}text-success{% else %}text-danger{% endif %}">{{ user.get_balance }} EUR</p>
-                    </div>
-                </div>
-                <br/>
-            </div>
+        {% for user in users_recent %}
+            {% include 'snippets/user.html' with user=user %}
         {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h4>
+                <span class="badge badge-secondary">
+                    Inactive users
+                </span>
+            </h4>
+        </div>
+
+        {% for user in users_other %}
+            {% include 'snippets/user.html' with user=user %}
+        {% endfor %}
+    </div>
+    <div class="row mb-2">
         <div class="col-md-2 col-6">
             <div class="card">
                 <a href="{% url 'user_new' %}">

@@ -1,16 +1,18 @@
 import datetime
-from itertools import chain
+import re
 
 import pytz
 from django.contrib import messages
-from django.http import QueryDict, JsonResponse
+from django.db.models import Count, Func, OuterRef, Subquery
+from django.db.models.functions import Lower
+from django.http import QueryDict, JsonResponse, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from drinkman import helpers
 from drinkman.forms import DeliveryForm, StockForm, UserForm, TransferForm
 from drinkman.helpers import increase_stock, new_transaction, get_location, redirect_qd, set_stock, receive_delivery, \
-    transfer_money
+    transfer_money, cents_to_eur
 from drinkman.models import User, Item, Location, Stock, Transaction
 
 
@@ -19,20 +21,34 @@ def index(request):
 
 
 def users(request):
-    location = request.GET.get('location')
+    location_id = request.GET.get('location')
 
-    users_pos = User.objects.order_by('-balance').filter(balance__gte=0).all()
-    users_neg = User.objects.order_by('?').filter(balance__lt=0).all()
-    users_all = chain(users_pos, users_neg)
+    setcookie = False
 
-    context = {'users': users_all}
+    if location_id is None:
+        location_id = get_location(request)
+    else:
+        setcookie = True
+
+    if location_id is None:
+        return redirect('locations')
+
+    daysago30 = datetime.datetime.utcnow() - datetime.timedelta(days=30)
+    last_user_ids_q = Transaction.objects.filter(user_id=OuterRef('id'), date__gte=daysago30,
+                                                 location_id=location_id).values('user_id').distinct()
+
+    users_recent = list(User.objects.order_by(Lower('username')).filter(id__in=Subquery(last_user_ids_q)).all())
+    users_other = list(User.objects.order_by(Lower('username')).exclude(id__in=Subquery(last_user_ids_q)).all())
+
+    users_recent.sort(key=lambda user: re.sub(r'[^a-z0-91]+', '', user.username.lower()))
+    users_other.sort(key=lambda user: re.sub(r'[^a-z0-91]+', '', user.username.lower()))
+
+    context = {'users_recent': users_recent, 'users_other': users_other}
 
     response = render(request, 'users.html', context)
 
-    if location is not None:
-        response.set_cookie('location', location)
-    elif get_location(request) is None:
-        redirect('location_select')
+    if setcookie:
+        response.set_cookie('location', location_id)
 
     return response
 
