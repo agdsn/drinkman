@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.getenv("DJANGO_DEBUG", False) or os.getenv("DJANGO_DEV", False) else False
+DEBUG = True if os.getenv("DJANGO_DEBUG", False) or int(os.getenv("DJANGO_DEV", False)) else False
 
 ALLOWED_HOSTS = ['agdsn.de', 'localhost', '127.0.0.1']
 
@@ -93,7 +93,7 @@ sqlite_db = {
 }
 
 DATABASES = {
-    'default': sqlite_db if os.getenv("DJANGO_DEV") else postgres_db
+    'default': sqlite_db if int(os.getenv("DJANGO_DEV")) else postgres_db
 }
 
 # Password validation
@@ -132,7 +132,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',

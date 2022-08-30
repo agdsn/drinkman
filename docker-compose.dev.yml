@@ -22,6 +22,6 @@ services:
       DB_NAME: drinkman
       DB_USER: postgres
       DB_PW: password
-      DJANGO_DEV: 'true'
+      DJANGO_DEV: 0
     depends_on:
       - db_dev
