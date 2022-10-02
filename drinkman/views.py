@@ -235,10 +235,10 @@ def refund(request, user_id, item_id):
 
     if refund_amt is not None:
         messages.warning(request,
-                         'Successfully refunded {} for {:12.2f} EUR.'
+                         'Successfully re-pfanded {} for {:12.2f} EUR.'
                          .format(item.name, cents_to_eur(refund_amt)))
     else:
-        messages.error(request, 'Error while refunding.')
+        messages.error(request, 'Error while re-pfanding.')
 
     qd = QueryDict(mutable=True)
     qd['after_transaction'] = True
