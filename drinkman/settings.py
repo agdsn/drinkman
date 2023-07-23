@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DJANGO_DEBUG", False) or int(os.getenv("DJANGO_DEV", 0)) else False
 
-ALLOWED_HOSTS = ['agdsn.de', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [os.getenv("DJANGO_ALLOWED_HOSTS"), 'localhost', '127.0.0.1']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
