@@ -26,8 +26,12 @@ SECRET_KEY = os.getenv("DJANGO_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DJANGO_DEBUG", False) or int(os.getenv("DJANGO_DEV", 0)) else False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-ALLOWED_HOSTS.extend(os.getenv("DJANGO_ALLOWED_HOSTS", "").split(","))
+hosts = ['localhost', '127.0.0.1']
+hosts.extend(os.getenv("DJANGO_ALLOWED_HOSTS", "").split(","))
+
+ALLOWED_HOSTS = hosts
+CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in hosts] + [f"http://{host}" for host in hosts]
+CSRF_ALLOWED_ORIGINS = [f"https://{host}" for host in hosts] + [f"http://{host}" for host in hosts]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
